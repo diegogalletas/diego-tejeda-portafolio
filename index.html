@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diego Tejeda, fotografía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== Tokens de color (cámbialos aquí y cambia todo el sitio) ===== */
+  :root {
+    --fondo: #f5f5f3;
+    --texto: #161616;
+    --texto-suave: #6b6b68;
+    --placeholder: #d9d9d5;
+    --linea: #d0d0cc;
+    --fuente: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #141414; --texto: #ececea; --texto-suave: #8e8e8a;
+      --placeholder: #2a2a28; --linea: #333331;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #141414; --texto: #ececea; --texto-suave: #8e8e8a;
+    --placeholder: #2a2a28; --linea: #333331;
+  }
+
+  /* ===== Base ===== */
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--fondo); color: var(--texto); font-family: var(--fuente); font-size: 16px; line-height: 1.55; }
+  a { color: inherit; }
+  a:focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; }
+  img, iframe { max-width: 100%; display: block; border: 0; }
+  .contenedor { max-width: 1400px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* ===== Encabezado ===== */
+  header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--fondo); border-bottom: 1px solid var(--linea); }
+  header .contenedor { display: flex; justify-content: space-between; align-items: center; height: 64px; gap: 24px; }
+  .nombre { font-weight: 700; font-size: 18px; text-decoration: none; white-space: nowrap; }
+  nav { display: flex; gap: clamp(12px, 2.5vw, 28px); overflow-x: auto; }
+  nav a { text-decoration: none; color: var(--texto-suave); font-size: 15px; white-space: nowrap; }
+  nav a:hover { color: var(--texto); }
+
+  /* ===== Portada ===== */
+  .portada { padding-block: clamp(16px, 3vw, 32px) clamp(48px, 8vw, 96px); }
+  .portada .foto { aspect-ratio: 16 / 9; }
+  .frase { margin-top: 28px; max-width: 34ch; font-size: clamp(22px, 3vw, 34px); line-height: 1.25; font-weight: 500; }
+
+  /* ===== Grupo "Proceso creativo" ===== */
+  .grupo { border-top: 1px solid var(--linea); padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(16px, 3vw, 32px); }
+  .grupo > h2 { font-size: clamp(34px, 5vw, 60px); font-weight: 700; line-height: 1.1; }
+
+  /* ===== Secciones desplegables (Técnica, Estudio, Efímeros en 35) ===== */
+  .desplegable > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: clamp(24px, 4vw, 40px) 0; }
+  .desplegable > summary::-webkit-details-marker { display: none; }
+  .desplegable > summary:focus-visible { outline: 2px solid var(--texto); outline-offset: 4px; }
+  .resumen { color: var(--texto-suave); margin-top: 4px; }
+  .indicador { flex-shrink: 0; width: 44px; height: 44px; border: 1px solid var(--linea); border-radius: 50%; position: relative; }
+  .indicador::before, .indicador::after { content: ""; position: absolute; top: 50%; left: 50%; width: 14px; height: 1.5px; background: var(--texto); transform: translate(-50%, -50%); }
+  .indicador::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .desplegable[open] .indicador::after { display: none; }
+  .desplegable > summary:hover .indicador { border-color: var(--texto); }
+  .contenido-desplegable { padding-bottom: clamp(32px, 5vw, 56px); }
+  .cerrar { margin-top: 40px; font: inherit; font-size: 15px; color: var(--texto-suave); background: none; border: 1px solid var(--linea); padding: 10px 18px; cursor: pointer; }
+  .cerrar:hover { color: var(--texto); border-color: var(--texto); }
+  .cerrar:focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; }
+
+  /* ===== Secciones del proceso creativo ===== */
+  .grupo > h2 { margin-bottom: 8px; }
+  .seccion + .seccion { border-top: 1px solid var(--linea); }
+  .seccion-numero { color: var(--texto-suave); font-size: 15px; }
+  .seccion h3 { font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; line-height: 1.15; }
+  .indice { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 24px; }
+  .indice a { color: var(--texto-suave); font-size: 15px; }
+  .indice a:hover { color: var(--texto); }
+  .en-proceso { color: var(--texto-suave); max-width: 60ch; }
+
+  /* ===== Temas (ejercicios) ===== */
+  .tema { padding: 32px 0; }
+  .tema h4 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+  .descripcion { color: var(--texto-suave); max-width: 60ch; margin-bottom: 20px; }
+  .galeria { columns: 4 220px; column-gap: 12px; }
+  .galeria .foto { margin-bottom: 12px; break-inside: avoid; }
+  .galeria.amplia { columns: 3 280px; column-gap: 16px; }
+  .galeria.amplia .foto { margin-bottom: 16px; }
+
+  /* ===== Proyectos artísticos ===== */
+  .proyecto { margin-top: 32px; padding: clamp(32px, 5vw, 56px) 0 0; border-top: 1px solid var(--linea); }
+  .proyecto-etiqueta { color: var(--texto-suave); font-size: 15px; }
+  .proyecto h4 { font-size: clamp(28px, 4vw, 48px); font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
+  .proyecto .foto-principal { aspect-ratio: 16 / 9; margin-bottom: 16px; }
+  .proyecto .galeria { columns: 3 280px; column-gap: 16px; }
+  .proyecto .galeria .foto { margin-bottom: 16px; }
+
+  /* ===== Efímeros en 35 ===== */
+  .efimeros { border-top: 1px solid var(--linea); padding-block: clamp(24px, 4vw, 48px); }
+  .efimeros h2 { font-size: clamp(34px, 5vw, 60px); font-weight: 700; line-height: 1.1; }
+  .efimeros h3 { font-size: 20px; font-weight: 500; margin: 40px 0 16px; }
+  .efimeros .galeria { columns: 3 280px; column-gap: 16px; }
+  .efimeros .galeria .foto { margin-bottom: 16px; }
+  .video { aspect-ratio: 16 / 9; width: 100%; }
+  .video iframe { width: 100%; height: 100%; }
+
+  /* ===== Fotos y marcadores ===== */
+  .foto { width: 100%; background: var(--placeholder); display: flex; align-items: center; justify-content: center; color: var(--texto-suave); font-size: 13px; text-align: center; padding: 8px; overflow: hidden; }
+  .foto:has(img), .foto:has(iframe) { padding: 0; }
+  .foto img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===== Sobre mí y contacto ===== */
+  .bloque { padding-block: clamp(48px, 7vw, 88px); border-top: 1px solid var(--linea); }
+  .bloque h2 { font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; margin-bottom: 8px; }
+  .bloque p { max-width: 60ch; }
+  .correo { display: inline-block; margin-top: 16px; font-size: clamp(20px, 2.5vw, 28px); }
+
+  footer { border-top: 1px solid var(--linea); padding: 24px 0; color: var(--texto-suave); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor">
+    <a class="nombre" href="#inicio">Diego Tejeda</a>
+    <nav id="menu"></nav>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="portada contenedor">
+    <div class="foto" id="portada-foto">Foto de portada</div>
+    <p class="frase">[Aquí va tu frase: la mirada que conecta tu trabajo]</p>
+  </section>
+
+  <section class="grupo contenedor" id="proceso">
+    <h2>Proceso creativo</h2>
+    <div id="secciones"></div>
+  </section>
+
+  <div class="efimeros contenedor"><details class="desplegable" id="efimeros"></details></div>
+
+  <section class="bloque contenedor" id="sobre">
+    <h2>Sobre mí</h2>
+    <p>[Tres o cuatro líneas sobre ti y tu trabajo]</p>
+  </section>
+
+  <section class="bloque contenedor" id="contacto">
+    <h2>Contacto</h2>
+    <a class="correo" href="mailto:correo@ejemplo.com">correo@ejemplo.com</a>
+  </section>
+</main>
+
+<footer>
+  <div class="contenedor">© Diego Tejeda</div>
+</footer>
+
+<script>
+  /* =====================================================================
+     CONTENIDO DEL PORTAFOLIO
+     - Para usar una foto real, agrega src: "fotos/tecnica/luz-01.jpg"
+       Si no hay src, se muestra un marcador gris con esa proporción.
+     - ratio es la proporción de la foto: "3/2" horizontal, "2/3" vertical,
+       "4/5" vertical corta, "1/1" cuadrada, "16/9" panorámica.
+     ===================================================================== */
+
+  // Foto de portada. Escribe la ruta en src, por ejemplo "fotos/portada.jpg".
+  // ratio: "16/9" panorámica, "3/2" horizontal normal, "2/3" vertical.
+  // alt: describe en pocas palabras lo que se ve en la foto.
+  const PORTADA = { src: "fotos/portada.jpg", ratio: "3/2", alt: "Garrafón de plástico tirado sobre el pasto, iluminado por luz cálida del atardecer" };
+
+  // Marcadores por defecto (4 fotos) para ejercicios sin fotos todavía
+  const pendientes = () => [{ ratio: "3/2" }, { ratio: "2/3" }, { ratio: "4/5" }, { ratio: "3/2" }];
+  const tema = (nombre) => ({ nombre, descripcion: "[Descripción breve del ejercicio]", fotos: pendientes() });
+
+  const SECCIONES = [
+    {
+      id: "tecnica", numero: "Sección I", titulo: "Técnica",
+      temas: [
+        tema("Fotografía estenopeica"),
+        tema("Fotogramas"),
+        tema("Exposición"),
+        tema("Tiempo y movimiento"),
+        tema("Profundidad de campo"),
+        tema("Luz"),
+        tema("Planos"),
+        tema("Ángulos"),
+        tema("Reglas fotográficas"),
+      ],
+      proyecto: {
+        etiqueta: "Proyecto artístico I", titulo: "Gracia sin Pena",
+        descripcion: "[Descripción del proyecto]",
+        principal: { ratio: "16/9" },
+        fotos: [{ ratio: "3/2" }, { ratio: "2/3" }, { ratio: "3/2" }, { ratio: "4/5" }, { ratio: "2/3" }, { ratio: "3/2" }],
+      },
+    },
+    {
+      id: "estudio", numero: "Sección II", titulo: "Estudio",
+      temas: [
+        tema("Medición de luz"),
+        tema("Luz continua"),
+        tema("Autorretrato"),
+        tema("High key / Low key"),
+        tema("Remake de retratos"),
+        tema("Remake de bodegón"),
+        tema("Naturaleza muerta"),
+        tema("Producto"),
+        tema("Moda"),
+      ],
+      proyecto: {
+        etiqueta: "Proyecto artístico II", titulo: "Onírico",
+        descripcion: "[Descripción del proyecto]",
+        principal: { ratio: "16/9" },
+        fotos: [{ ratio: "2/3" }, { ratio: "3/2" }, { ratio: "4/5" }, { ratio: "3/2" }, { ratio: "2/3" }, { ratio: "1/1" }],
+      },
+    },
+    {
+      id: "interiores", numero: "Sección III", titulo: "Arquitectura de interiores",
+      resumen: "Campo Militar, Centro, MAMO, MUNAL y Taller de Metales",
+      temas: [
+        tema("Campo Militar"),
+        tema("Centro"),
+        tema("MAMO"),
+        tema("MUNAL"),
+        tema("Taller de Metales"),
+      ],
+    },
+  ];
+
+  const EFIMEROS = {
+    visible: false, // cámbialo a true el 30 de noviembre para que aparezca en el sitio
+    titulo: "Efímeros en 35",
+    resumen: "Serie documental y cortometraje", // línea que se ve con la sección cerrada
+    descripcion: "[Descripción de Efímeros en 35]",
+    fotos: [{ ratio: "3/2" }, { ratio: "3/2" }, { ratio: "2/3" }, { ratio: "3/2" }, { ratio: "1/1" }, { ratio: "2/3" }, { ratio: "3/2" }, { ratio: "4/5" }, { ratio: "3/2" }],
+    // Pega aquí el link de inserción (embed) de Vimeo o YouTube cuando lo tengas.
+    // Ejemplo: "https://player.vimeo.com/video/123456789"
+    video: "",
+  };
+
+  /* ===== A partir de aquí: código que dibuja el sitio (no necesitas tocarlo) ===== */
+  const slug = (t) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+  const foto = (f, etiqueta, clase = "") => {
+    const contenido = f.src ? `<img src="${f.src}" alt="${etiqueta}" loading="lazy">` : etiqueta;
+    return `<div class="foto ${clase}" style="aspect-ratio:${f.ratio}">${contenido}</div>`;
+  };
+  const galeria = (fotos, nombre) =>
+    `<div class="galeria">${fotos.map((f, i) => foto(f, `${nombre}, foto ${i + 1}`)).join("")}</div>`;
+
+  // Portada
+  const portada = document.getElementById("portada-foto");
+  portada.style.aspectRatio = PORTADA.ratio;
+  if (PORTADA.src) portada.innerHTML = `<img src="${PORTADA.src}" alt="${PORTADA.alt}" fetchpriority="high">`;
+
+  // Secciones del proceso creativo
+  const html = SECCIONES.map(s => {
+    const idsTemas = s.temas.map(t => `${s.id}-${slug(t.nombre)}`);
+    const indice = s.temas.length
+      ? `<div class="indice">${s.temas.map((t, i) => `<a href="#${idsTemas[i]}">${t.nombre}</a>`).join("")}${s.proyecto ? `<a href="#${s.id}-proyecto">${s.proyecto.titulo}</a>` : ""}</div>`
+      : "";
+    const temas = s.temas.map((t, i) => `
+      <article class="tema" id="${idsTemas[i]}">
+        <h4>${t.nombre}</h4>
+        <p class="descripcion">${t.descripcion}</p>
+        ${galeria(t.fotos, t.nombre)}
+      </article>`).join("");
+    const proyecto = s.proyecto ? `
+      <article class="proyecto" id="${s.id}-proyecto">
+        <p class="proyecto-etiqueta">${s.proyecto.etiqueta}</p>
+        <h4>${s.proyecto.titulo}</h4>
+        <p class="descripcion">${s.proyecto.descripcion}</p>
+        ${foto(s.proyecto.principal, `${s.proyecto.titulo}, foto principal`, "foto-principal")}
+        ${galeria(s.proyecto.fotos, s.proyecto.titulo)}
+      </article>` : "";
+    const n = s.temas.length;
+    const resumen = s.resumen || (`${n} ejercicios` + (s.proyecto ? ` y el proyecto ${s.proyecto.titulo}` : ""));
+    const general = !n && s.fotos
+      ? `<p class="descripcion">${s.descripcion || ""}</p>${galeria(s.fotos, s.titulo).replace('class="galeria"', 'class="galeria amplia"')}`
+      : "";
+    return `
+      <details class="desplegable seccion" id="${s.id}">
+        <summary>
+          <div>
+            <p class="seccion-numero">${s.numero}</p>
+            <h3>${s.titulo}</h3>
+            <p class="resumen">${resumen}</p>
+          </div>
+          <span class="indicador" aria-hidden="true"></span>
+        </summary>
+        <div class="contenido-desplegable">
+          ${indice + temas + general + proyecto}
+          <button class="cerrar" type="button">Cerrar ${s.titulo}</button>
+        </div>
+      </details>`;
+  }).join("");
+  document.getElementById("secciones").innerHTML = html;
+
+  // Efímeros en 35
+  const video = EFIMEROS.video
+    ? `<div class="foto video"><iframe src="${EFIMEROS.video}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Cortometraje ${EFIMEROS.titulo}"></iframe></div>`
+    : `<div class="foto video">Cortometraje</div>`;
+  document.getElementById("efimeros").innerHTML = `
+    <summary>
+      <div>
+        <h2>${EFIMEROS.titulo}</h2>
+        <p class="resumen">${EFIMEROS.resumen}</p>
+      </div>
+      <span class="indicador" aria-hidden="true"></span>
+    </summary>
+    <div class="contenido-desplegable">
+      <p class="descripcion">${EFIMEROS.descripcion}</p>
+      <h3>Serie documental</h3>
+      ${galeria(EFIMEROS.fotos, EFIMEROS.titulo)}
+      <h3>Cortometraje</h3>
+      ${video}
+      <button class="cerrar" type="button">Cerrar ${EFIMEROS.titulo}</button>
+    </div>`;
+
+  if (!EFIMEROS.visible) document.getElementById("efimeros").parentElement.remove();
+
+  // Menú
+  const menu = document.getElementById("menu");
+  menu.innerHTML =
+    SECCIONES.map(s => `<a href="#${s.id}">${s.titulo}</a>`).join("") +
+    (EFIMEROS.visible ? `<a href="#efimeros">${EFIMEROS.titulo}</a>` : "") +
+    `<a href="#sobre">Sobre mí</a><a href="#contacto">Contacto</a>`;
+
+  /* ===== Comportamiento de las secciones desplegables ===== */
+  const ALTO_ENCABEZADO = 72;
+
+  // Al cerrar: si el título quedó arriba fuera de la pantalla, regresa a él
+  document.querySelectorAll(".desplegable").forEach(d => {
+    const titulo = d.querySelector("summary");
+    d.addEventListener("toggle", () => {
+      if (!d.open && titulo.getBoundingClientRect().top < ALTO_ENCABEZADO) {
+        titulo.scrollIntoView({ block: "start" });
+      }
+    });
+    d.querySelector(".cerrar").addEventListener("click", () => {
+      d.open = false;
+      titulo.focus({ preventScroll: true });
+    });
+  });
+
+  // Al usar el menú o un índice: abre la sección que contiene el destino
+  const abrirDestino = (hash) => {
+    if (!hash || hash === "#") return;
+    const destino = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!destino) return;
+    const contenedor = destino.matches(".desplegable") ? destino : destino.closest(".desplegable");
+    if (contenedor) contenedor.open = true;
+  };
+  document.addEventListener("click", e => {
+    const enlace = e.target.closest('a[href^="#"]');
+    if (enlace) abrirDestino(enlace.getAttribute("href"));
+  });
+  if (location.hash) { abrirDestino(location.hash); document.getElementById(location.hash.slice(1))?.scrollIntoView(); }
+</script>
+</body>
+</html>
