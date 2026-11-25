@@ -46,11 +46,23 @@
   nav { display: flex; gap: clamp(12px, 2.5vw, 28px); overflow-x: auto; }
   nav a { text-decoration: none; color: var(--texto-suave); font-size: 15px; white-space: nowrap; }
   nav a:hover { color: var(--texto); }
+  /* Menú en pantallas angostas: los enlaces se juntan en un botón */
+  .boton-menu { display: none; font: inherit; font-size: 15px; color: var(--texto); background: none;
+    border: 1px solid var(--linea); border-radius: 999px; padding: 0 18px; min-height: 40px; cursor: pointer; }
+  .boton-menu:focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; }
+  @media (max-width: 760px) {
+    .boton-menu { display: inline-flex; align-items: center; }
+    nav { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0;
+      background: var(--fondo); border-bottom: 1px solid var(--linea); padding: 4px clamp(16px, 4vw, 48px) 12px; }
+    nav.abierto { display: flex; }
+    nav a { color: var(--texto); font-size: 18px; padding: 14px 0; border-bottom: 1px solid var(--linea); }
+    nav a:last-child { border-bottom: 0; }
+  }
 
   /* ===== Portada ===== */
   .portada { padding-block: clamp(16px, 3vw, 32px) clamp(48px, 8vw, 96px); }
   .portada .foto { aspect-ratio: 16 / 9; }
-  .frase { margin-top: 28px; max-width: 34ch; font-size: clamp(22px, 3vw, 34px); line-height: 1.25; font-weight: 500; }
+  .frase { margin-top: 28px; max-width: 34ch; text-wrap: balance; font-size: clamp(22px, 3vw, 34px); line-height: 1.25; font-weight: 500; }
 
   /* ===== Grupo "Proceso creativo" ===== */
   .grupo { border-top: 1px solid var(--linea); padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(16px, 3vw, 32px); }
@@ -84,6 +96,7 @@
   /* ===== Temas (ejercicios) ===== */
   .tema { padding: 32px 0; }
   .tema h4 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+  .tema h4 + .galeria { margin-top: 16px; }
   .descripcion { color: var(--texto-suave); max-width: 60ch; margin-bottom: 20px; }
   /* Galería en filas: se lee de izquierda a derecha, en el orden de la lista.
      Cada foto ocupa un ancho proporcional a su formato, así todas las fotos
@@ -120,6 +133,32 @@
   .correo { display: inline-block; margin-top: 16px; font-size: clamp(20px, 2.5vw, 28px); }
 
   footer { border-top: 1px solid var(--linea); padding: 24px 0; color: var(--texto-suave); font-size: 14px; }
+
+  /* ===== Visor de fotos (clic en una foto para verla grande) ===== */
+  .con-visor .foto:has(img) { cursor: zoom-in; }
+  .con-visor .foto:has(img):focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; }
+  #visor { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+    background: #0b0b0b; color: #ececea; overflow: hidden; }
+  #visor[open] { display: grid; grid-template-rows: auto 1fr; }
+  #visor::backdrop { background: #0b0b0b; }
+  .visor-barra { display: flex; align-items: center; gap: 16px; padding: calc(env(safe-area-inset-top, 0px) + 12px) clamp(16px, 3vw, 32px) 12px; }
+  .visor-titulo { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .visor-contador { color: #8e8e8a; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .visor-cerrar { margin-left: auto; }
+  .visor-marco { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0;
+    padding: 0 clamp(8px, 7vw, 88px) calc(env(safe-area-inset-bottom, 0px) + 16px); touch-action: pan-y; }
+  .visor-marco img { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; transition: opacity .2s; }
+  .visor-marco img.cargando { opacity: 0; }
+  .visor-boton { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #3a3a38; background: rgba(20,20,20,.7);
+    color: #ececea; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
+  .visor-boton:hover { border-color: #ececea; }
+  .visor-boton:focus-visible { outline: 2px solid #ececea; outline-offset: 3px; }
+  .visor-boton svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .visor-flecha { position: absolute; top: 50%; transform: translateY(-50%); }
+  .visor-flecha[hidden] { display: none; }
+  .visor-anterior { left: clamp(8px, 2vw, 24px); }
+  .visor-siguiente { right: clamp(8px, 2vw, 24px); }
+  @media (prefers-reduced-motion: reduce) { .visor-marco img { transition: none; } }
 </style>
 </head>
 <body>
@@ -127,6 +166,7 @@
 <header>
   <div class="contenedor">
     <a class="nombre" href="#inicio">Diego Tejeda</a>
+    <button class="boton-menu" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
     <nav id="menu"></nav>
   </div>
 </header>
@@ -134,7 +174,7 @@
 <main id="inicio">
   <section class="portada contenedor">
     <div class="foto" id="portada-foto">Foto de portada</div>
-    <p class="frase">[Aquí va tu frase: la mirada que conecta tu trabajo]</p>
+    <p class="frase">Guardo luz para cuando ya no me quede memoria.</p>
   </section>
 
   <section class="grupo contenedor" id="proceso">
@@ -146,18 +186,37 @@
 
   <section class="bloque contenedor" id="sobre">
     <h2>Sobre mí</h2>
-    <p>[Tres o cuatro líneas sobre ti y tu trabajo]</p>
+    <p>Soy Diego Tejeda, fotógrafo en la Ciudad de México. Me interesa lo que el tiempo deja atrás: cuerpos, sueños, lugares abandonados, objetos que nadie mira. Trabajo entre el cuarto oscuro y el estudio, entre la película y lo digital, buscando que cada imagen funcione como memoria. Abierto a encargos (retrato, moda, producto y arquitectura), colaboraciones y exposiciones.</p>
   </section>
 
   <section class="bloque contenedor" id="contacto">
     <h2>Contacto</h2>
-    <a class="correo" href="mailto:correo@ejemplo.com">correo@ejemplo.com</a>
+    <a class="correo" href="mailto:hola@diegotejedas.com">hola@diegotejedas.com</a>
   </section>
 </main>
 
 <footer>
   <div class="contenedor">© Diego Tejeda</div>
 </footer>
+
+<dialog id="visor" aria-label="Visor de fotos">
+  <div class="visor-barra">
+    <p class="visor-titulo"></p>
+    <p class="visor-contador"></p>
+    <button class="visor-boton visor-cerrar" type="button" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="visor-marco">
+    <img alt="">
+    <button class="visor-boton visor-flecha visor-anterior" type="button" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="visor-boton visor-flecha visor-siguiente" type="button" aria-label="Foto siguiente">
+      <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</dialog>
 
 <script>
   /* =====================================================================
@@ -175,7 +234,44 @@
 
   const f = (src, ratio) => ({ src: "fotos/" + src, ratio });
   const pendientes = () => [{ ratio: "3/2" }, { ratio: "2/3" }, { ratio: "4/5" }, { ratio: "3/2" }];
-  const tema = (nombre, fotos = pendientes()) => ({ nombre, descripcion: "[Descripción breve del ejercicio]", fotos });
+  // Descripciones de los ejercicios, por nombre (el nombre debe ser igual al de tema("...")).
+  // Un ejercicio sin descripción aquí se muestra solo con su título y sus fotos.
+  const DESCRIPCIONES = {
+    "Ángulos":
+      "Los ángulos de toma son fundamentales para definir el impacto, la narrativa y las emociones de una fotografía. Un ángulo bajo aporta poder y grandeza al sujeto, mientras que uno alto o en picado transmite fragilidad o destaca detalles ocultos, y el plano cenital ofrece una perspectiva distante. Dominar estas variaciones enriquece la composición y transforma por completo la expresión de la imagen.",
+    "Exposición":
+      "La exposición determina la cantidad de luz que recibe el material sensible, apoyándose en la velocidad de obturación para definir el tiempo de entrada. Para ponerlo en práctica con una cámara análoga, fotografiamos una pared blanca combinando todas las aperturas y velocidades disponibles. Tras revelar los negativos en el cuarto oscuro, obtuvimos una hoja de contacto con todas las variaciones y ampliamos una de las tomas para lograr una fotografía totalmente análoga.",
+    "Fotogramas":
+      "Los fotogramas son fotografías sin cámara creadas al colocar objetos directamente sobre papel fotosensible y exponerlos a la ampliadora, inmortalizando sus contornos, sombras y transparencias. Utilicé materiales opacos, translúcidos y con textura sobre tres papeles distintos para representar el concepto «rodar de equilibrio», obteniendo resultados abstractos y visualmente atractivos.",
+    "Luz":
+      "Trabajar con la luz busca comprender cómo sus cualidades y dirección afectan la imagen según la posición de la cámara. En esta práctica, disparé un rollo de 36 exposiciones cuidando el ángulo frente a la fuente luminosa para capturar cuatro tipos: luz dura (alto contraste y sombras marcadas), luz suave (iluminación uniforme), contraluz (siluetas y dramatismo) y luz rebotada (sombras suavizadas con brillo sutil). Dominar estas variaciones permite tomar decisiones creativas más conscientes y elevar la calidad visual.",
+    "Fotografía estenopeica":
+      "La fotografía estenopeica utiliza una caja con un pequeño orificio llamado estenopo en lugar de lente para proyectar la imagen sobre material fotosensible. Con este método, capturé un retrato, un objeto y un espacio. Tras someter las tomas al proceso químico de revelado, baño de agua y fijador en el cuarto oscuro, obtuve tres negativos; luego, al exponerlos sobre papel fotosensible nuevo bajo la ampliadora por 3 a 5 segundos y repetir el revelado, logré las imágenes positivas.",
+    "Planos":
+      "Los planos cinematográficos son encuadres esenciales para lograr armonía y calidad visual, abarcando desde perspectivas muy lejanas hasta detalles específicos del sujeto. Cada tipo aporta una carga narrativa y emocional distinta: un plano general establece el contexto y el entorno, mientras que un primer plano intensifica las emociones. Dominar su uso permite guiar la atención del espectador, conectar con los personajes y contar historias de manera efectiva.",
+    "Profundidad de campo":
+      "Ajustar la apertura del diafragma controla la profundidad de campo, es decir, la zona nítida de la imagen. Una apertura amplia (como f/1.8 o f/2.8) enfoca al sujeto y desenfoca el fondo, ideal para aislarlo en retratos; en cambio, una apertura cerrada (como f/11 o f/22) mantiene nítida toda la escena, perfecta para paisajes. Dominar este ajuste brinda control total sobre la composición, permitiéndote elegir entre destacar un elemento o capturar todo el entorno en detalle.",
+    "Reglas fotográficas":
+      "A través de estas fotografías se exploraron reglas de composición como el balance, las líneas de dirección, la profundidad, la simetría, el contraste figura-fondo y la doble exposición. Cada toma reúne de forma práctica el dominio técnico de la apertura, la velocidad, el ISO, la iluminación y la profundidad de campo para construir imágenes visualmente efectivas.",
+    "Tiempo y movimiento":
+      "A partir de manipular la velocidad de obturación y la apertura junto con el uso del exposímetro, se exploró la relación entre tiempo y movimiento mediante la cámara digital. Para detener por completo la acción y obtener cuatro imágenes congeladas se emplearon velocidades superiores a 1/250 de segundo, mientras que para lograr cuatro barridos con sensación de desplazamiento se utilizó una velocidad lenta de 1/30 de segundo.",
+    "Autorretrato":
+      "A través de dos autorretratos se exploraron dos enfoques opuestos: el simbolismo y el cuerpo como material plástico. Para el primero, se montó un set doméstico que retrata mi identidad mediante banderas, objetos de herencia cultural e intereses como la literatura, el cine y la jardinería, destacando unos lentes como metáfora de mi reserva personal ante el público. En contraste, la segunda captura utilizó la doble exposición y la disposición corporal para recrear la ilusión óptica de una mano de frente con movimiento, priorizando la experimentación formal y visual sobre el significado emocional. En conjunto, ambas piezas demuestran cómo el autorretrato funciona tanto para narrar la esencia conceptual del «yo» como para moldear físicamente la figura humana.",
+    "High key / Low key":
+      "A través de esta exploración se trabajaron las técnicas high key y low key, basadas respectivamente en sobreexponer los blancos para rescatar detalle en las sombras y en subexponer los negros para aislar únicamente los puntos iluminados por luz dura. Aplicando estos principios en exteriores, se realizaron dos capturas: un plano general de una capilla que revela cada detalle interior a costa de sobreexponer el exterior (high key), y un plano de detalle de dos cruces donde solo resalta la luz dura que las golpea frente a un fondo sumergido en negro (low key).",
+    "Remake de retratos":
+      "A través de esta sesión se realizó una reinterpretación a color de obras originalmente en blanco y negro del fotógrafo de moda Michael Bailey-Gates, cuidando el encuadre, el punto de vista, la dirección de pose, el lenguaje corporal y el diseño de arte. En el proceso se integraron herramientas de iluminación profesional —como flashes, modeladores de luz y ciclorama— para construir y dirigir la luz con fidelidad estética mientras se daba nueva vida cromática a las piezas originales.",
+    "Naturaleza muerta":
+      "A través de la naturaleza muerta se exploró la fotografía de objetos inanimados y elementos cotidianos, retomando el impulso humano de retratar su entorno inmediato. Más allá de un simple registro visual, este género permite controlar la luz y la composición para dotar de voz, simbolismo y alma a lo ordinario, transformando objetos estáticos en narradores de historias que reflejan nuestra relación con el mundo.",
+    "Remake de bodegón":
+      "A partir de lo explorado en el still life contemporáneo, pero en un entorno con mayor control espacial y lumínico, se realizó una reinterpretación fotográfica del bodegón del siglo XVII Flores en un jarrón de plata, del pintor holandés Willem van Aelst. El enfoque principal consistió en diseñar un esquema de iluminación que replicara la atmósfera barroca original, calculando el ángulo lateral preciso y la dureza de las sombras para esculpir los volúmenes del metal y los pétalos. Asimismo, se cuidó tanto el styling y la composición asimétrica del set como la gestión del color en postproducción para igualar la riqueza cromática de los pigmentos al óleo de la época.",
+    "Producto":
+      "En esta exploración de fotografía de producto se trabajó en un espacio controlado para dominar cada variable visual y construir una estética publicitaria limpia y contundente. El esquema se estructuró con dos flashes principales laterales que acentúan el relieve y los detalles, permitiendo definir con precisión los brillos especulares en los materiales y la saturación cromática. Este nivel de control lumínico convierte al producto en el protagonista absoluto del encuadre, dotándolo de intención, carácter y una apariencia visual de alta calidad.",
+    "Moda":
+      "En esta exploración de fotografía de moda se tomó como narrativa visual el futurismo italiano, reinterpretando conceptos como la «línea de fuerza», la simultaneidad y la velocidad tecnológica dentro de una estética editorial contemporánea. En el espacio de estudio se combinaron largas exposiciones con destellos de flash y barridos controlados para generar estelas de luz alrededor de las modelos, transformando las prendas estáticas en vectores de energía que proyectan movimiento constante, ritmo acelerado y una atmósfera visual cercana a la ciencia ficción.",
+  };
+
+  const tema = (nombre, fotos = pendientes()) => ({ nombre, descripcion: DESCRIPCIONES[nombre] || "", fotos });
 
   const SECCIONES = [
     {
@@ -249,7 +345,7 @@
       ],
       proyecto: {
         etiqueta: "Proyecto artístico I", titulo: "Gracia sin Pena",
-        descripcion: "[Descripción del proyecto]",
+        descripcion: "Encontrar belleza, elegancia y amor en nuestra cáscara puede ser un desafío, a menudo envuelto en vergüenza. Nuestro cuerpo es el recipiente con el que llegamos al mundo y el acompañante de momentos de dolor, melancolía, felicidad, paz, vulnerabilidad y soledad. No hay espacio para el desprecio; debemos abrazar y sumergirnos en nuestro jardín hasta tocar los huesos y sentirnos verdaderamente vivos. Somos solo un abrir y cerrar de ojos en el vasto tiempo del universo; al dejar este plano, nuestro cuerpo se convertirá en parte del entorno. ¿Qué mejor legado que un caparazón que vivió amándose a sí mismo, sin desprecio?",
         principal: f("gracia-sin-pena/gracia-sin-pena-01.jpg", "2000/1333"),
         fotos: [
           f("gracia-sin-pena/gracia-sin-pena-02.jpg", "1333/2000"),
@@ -277,11 +373,11 @@
           f("estudio/remake-retratos-02.jpg", "1181/1772"),
           f("estudio/remake-retratos-03.jpg", "1181/1772"),
         ]),
-        tema("Remake de bodegón", [
-          f("estudio/remake-bodegon-01.jpg", "1181/1540"),
-        ]),
         tema("Naturaleza muerta", [
           f("estudio/naturaleza-muerta-01.jpg", "1772/1181"),
+        ]),
+        tema("Remake de bodegón", [
+          f("estudio/remake-bodegon-01.jpg", "1181/1540"),
         ]),
         tema("Producto", [
           f("estudio/producto-01.jpg", "1772/1181"),
@@ -301,7 +397,7 @@
       ],
       proyecto: {
         etiqueta: "Proyecto artístico II", titulo: "Onírico",
-        descripcion: "[Descripción del proyecto]",
+        descripcion: "El inconsciente es el escenario donde habitan nuestros verdaderos deseos, temores y ambiciones; el único rincón que conocemos en intimidad, invisible a los ojos de los demás. Es a través de los sueños donde este mundo oculto se proyecta. Esas visiones que nos asaltan al dormir no son más que la representación abstracta y profunda de nuestra mente. Al despertar, olvidamos casi en su totalidad lo vivido; la mayoría de las veces sólo quedan fragmentos y detalles que parecen pinturas surrealistas.",
         principal: f("onirico/onirico-02.jpg", "1772/1181"),
         fotos: [
           f("onirico/onirico-01.jpg", "1771/1181"),
@@ -315,26 +411,8 @@
     },
     {
       id: "interiores", numero: "Sección III", titulo: "Arquitectura de interiores",
-      resumen: "Campo Militar, Centro, MAMO, MUNAL y Taller de Metales",
       temas: [
-        tema("Campo Militar", [
-          f("interiores/campo-militar-01.jpg", "2000/1333"),
-          f("interiores/campo-militar-02.jpg", "2000/1333"),
-          f("interiores/campo-militar-03.jpg", "2000/1333"),
-          f("interiores/campo-militar-04.jpg", "2000/1333"),
-          f("interiores/campo-militar-05.jpg", "2000/1333"),
-          f("interiores/campo-militar-06.jpg", "2000/1333"),
-          f("interiores/campo-militar-07.jpg", "2000/1333"),
-          f("interiores/campo-militar-08.jpg", "2000/1333"),
-          f("interiores/campo-militar-09.jpg", "2000/1333"),
-          f("interiores/campo-militar-10.jpg", "2000/1333"),
-          f("interiores/campo-militar-11.jpg", "1333/2000"),
-          f("interiores/campo-militar-12.jpg", "2000/1333"),
-          f("interiores/campo-militar-13.jpg", "2000/1333"),
-          f("interiores/campo-militar-14.jpg", "2000/1333"),
-          f("interiores/campo-militar-15.jpg", "2000/1333"),
-        ]),
-        tema("Centro", [
+        tema("CENTRO", [
           f("interiores/centro-01.jpg", "2000/1333"),
           f("interiores/centro-02.jpg", "2000/1333"),
           f("interiores/centro-03.jpg", "2000/1333"),
@@ -351,7 +429,7 @@
           f("interiores/centro-14.jpg", "2000/1333"),
           f("interiores/centro-15.jpg", "2000/1333"),
         ]),
-        tema("MAMO", [
+        tema("MAM", [
           f("interiores/mamo-01.jpg", "2000/1333"),
           f("interiores/mamo-02.jpg", "2000/1333"),
           f("interiores/mamo-03.jpg", "2000/1333"),
@@ -403,6 +481,27 @@
           f("interiores/taller-metales-15.jpg", "2000/1333"),
         ]),
       ],
+      proyecto: {
+        etiqueta: "Proyecto artístico III", titulo: "Pólvora",
+        descripcion: "El tiempo no perdona y se come todo lo que dejamos atrás. Igual que la pólvora, que explota, sucede y consume lo que había ahí, el tiempo actúa sobre esta antigua fábrica: el moho, el agua estancada y la vegetación reclaman cada rincón. Pero la ruina no quedó vacía; quienes llegaron después la ocuparon con grafitis, basura y objetos rotos, capas de tiempo sobre lo abandonado. Cada espacio guarda la huella de lo que fue y de quienes pasaron.",
+        principal: f("interiores/campo-militar-01.jpg", "2000/1333"),
+        fotos: [
+          f("interiores/campo-militar-02.jpg", "2000/1333"),
+          f("interiores/campo-militar-03.jpg", "2000/1333"),
+          f("interiores/campo-militar-04.jpg", "2000/1333"),
+          f("interiores/campo-militar-05.jpg", "2000/1333"),
+          f("interiores/campo-militar-06.jpg", "2000/1333"),
+          f("interiores/campo-militar-07.jpg", "2000/1333"),
+          f("interiores/campo-militar-08.jpg", "2000/1333"),
+          f("interiores/campo-militar-09.jpg", "2000/1333"),
+          f("interiores/campo-militar-10.jpg", "2000/1333"),
+          f("interiores/campo-militar-11.jpg", "1333/2000"),
+          f("interiores/campo-militar-12.jpg", "2000/1333"),
+          f("interiores/campo-militar-13.jpg", "2000/1333"),
+          f("interiores/campo-militar-14.jpg", "2000/1333"),
+          f("interiores/campo-militar-15.jpg", "2000/1333"),
+        ],
+      },
     },
   ];
 
@@ -442,19 +541,19 @@
     const temas = s.temas.map((t, i) => `
       <article class="tema" id="${idsTemas[i]}">
         <h4>${t.nombre}</h4>
-        <p class="descripcion">${t.descripcion}</p>
+        ${t.descripcion ? `<p class="descripcion">${t.descripcion}</p>` : ""}
         ${galeria(t.fotos, t.nombre)}
       </article>`).join("");
     const proyecto = s.proyecto ? `
       <article class="proyecto" id="${s.id}-proyecto">
         <p class="proyecto-etiqueta">${s.proyecto.etiqueta}</p>
         <h4>${s.proyecto.titulo}</h4>
-        <p class="descripcion">${s.proyecto.descripcion}</p>
+        ${s.proyecto.descripcion ? `<p class="descripcion">${s.proyecto.descripcion}</p>` : ""}
         ${foto(s.proyecto.principal, `${s.proyecto.titulo}, foto principal`, "foto-principal")}
         ${galeria(s.proyecto.fotos, s.proyecto.titulo)}
       </article>` : "";
     const n = s.temas.length;
-    const resumen = s.resumen || (`${n} ejercicios` + (s.proyecto ? ` y el proyecto ${s.proyecto.titulo}` : ""));
+    const resumen = s.resumen || (`${n} ${n === 1 ? "serie" : "series"}` + (s.proyecto ? ` y el proyecto ${s.proyecto.titulo}` : ""));
     const general = !n && s.fotos
       ? `<p class="descripcion">${s.descripcion || ""}</p>${galeria(s.fotos, s.titulo).replace('class="galeria"', 'class="galeria amplia"')}`
       : "";
@@ -536,6 +635,115 @@
     if (enlace) abrirDestino(enlace.getAttribute("href"));
   });
   if (location.hash) { abrirDestino(location.hash); document.getElementById(location.hash.slice(1))?.scrollIntoView(); }
+
+  /* ===== Visor de fotos =====
+     Secciones donde se puede abrir una foto en grande.
+     Para activarlo en otra sección, agrega su id: "estudio", "interiores", "efimeros". */
+  const VISOR_SECCIONES = ["tecnica", "estudio", "interiores"];
+
+  {
+    const visor = document.getElementById("visor");
+    const imagen = visor.querySelector(".visor-marco img");
+    const titulo = visor.querySelector(".visor-titulo");
+    const contador = visor.querySelector(".visor-contador");
+    const anterior = visor.querySelector(".visor-anterior");
+    const siguiente = visor.querySelector(".visor-siguiente");
+    let grupo = [], actual = 0, origen = null;
+
+    // Cada ejercicio o proyecto es un grupo independiente
+    const grupos = document.querySelectorAll(VISOR_SECCIONES.map(id => `#${id} .tema, #${id} .proyecto`).join(","));
+    grupos.forEach(g => {
+      g.classList.add("con-visor");
+      g.querySelectorAll(".foto img").forEach((img, i) => {
+        const caja = img.parentElement;
+        caja.tabIndex = 0;
+        caja.setAttribute("role", "button");
+        caja.setAttribute("aria-label", `Ver en grande: ${img.alt}`);
+      });
+    });
+
+    const mostrar = (i) => {
+      actual = i;
+      const img = grupo[i];
+      imagen.classList.add("cargando");
+      imagen.onload = () => imagen.classList.remove("cargando");
+      imagen.src = img.currentSrc || img.src;
+      imagen.alt = img.alt;
+      contador.textContent = `${i + 1} / ${grupo.length}`;
+      anterior.hidden = i === 0;
+      siguiente.hidden = i === grupo.length - 1;
+      // precarga las vecinas
+      [i - 1, i + 1].forEach(j => { if (grupo[j]) new Image().src = grupo[j].src; });
+    };
+
+    const abrir = (caja) => {
+      const contenedor = caja.closest(".con-visor");
+      grupo = [...contenedor.querySelectorAll(".foto img")];
+      titulo.textContent = contenedor.querySelector("h4")?.textContent || "";
+      origen = caja;
+      document.documentElement.style.overflow = "hidden";
+      visor.showModal();
+      mostrar(grupo.indexOf(caja.querySelector("img")));
+    };
+    const mover = (paso) => { const j = actual + paso; if (j >= 0 && j < grupo.length) mostrar(j); };
+
+    document.addEventListener("click", e => {
+      const caja = e.target.closest(".con-visor .foto");
+      if (caja && caja.querySelector("img")) abrir(caja);
+    });
+    document.addEventListener("keydown", e => {
+      const caja = e.target.closest?.(".con-visor .foto");
+      if (caja && caja.querySelector("img") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); abrir(caja); }
+    });
+
+    anterior.addEventListener("click", () => mover(-1));
+    siguiente.addEventListener("click", () => mover(1));
+    visor.querySelector(".visor-cerrar").addEventListener("click", () => visor.close());
+    visor.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); mover(-1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); mover(1); }
+    });
+    // Clic fuera de la foto (en el fondo) cierra el visor
+    let deslizo = false;
+    visor.addEventListener("click", e => {
+      if (deslizo) { deslizo = false; return; }
+      if (e.target === visor || e.target.classList.contains("visor-marco")) visor.close();
+    });
+    visor.addEventListener("close", () => {
+      document.documentElement.style.overflow = "";
+      imagen.removeAttribute("src");
+      origen?.focus({ preventScroll: true });
+    });
+
+    // Deslizar con el dedo en celular
+    let x0 = null;
+    const marco = visor.querySelector(".visor-marco");
+    marco.addEventListener("pointerdown", e => { x0 = e.clientX; });
+    marco.addEventListener("pointerup", e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 50) { deslizo = true; mover(dx < 0 ? 1 : -1); }
+    });
+  }
+
+  /* ===== Menú en celular ===== */
+  {
+    const boton = document.querySelector(".boton-menu");
+    const nav = document.getElementById("menu");
+    const poner = (abierto) => {
+      nav.classList.toggle("abierto", abierto);
+      boton.setAttribute("aria-expanded", abierto);
+      boton.textContent = abierto ? "Cerrar" : "Menú";
+    };
+    boton.addEventListener("click", () => poner(!nav.classList.contains("abierto")));
+    nav.addEventListener("click", e => { if (e.target.closest("a")) poner(false); });
+    document.addEventListener("click", e => {
+      if (nav.classList.contains("abierto") && !e.target.closest("header")) poner(false);
+    });
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && nav.classList.contains("abierto")) { poner(false); boton.focus(); }
+    });
+  }
 </script>
 </body>
 </html>
