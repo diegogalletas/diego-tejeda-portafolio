@@ -161,71 +161,266 @@
 <script>
   /* =====================================================================
      CONTENIDO DEL PORTAFOLIO
-     - Para usar una foto real, agrega src: "fotos/tecnica/luz-01.jpg"
-       Si no hay src, se muestra un marcador gris con esa proporción.
-     - ratio es la proporción de la foto: "3/2" horizontal, "2/3" vertical,
-       "4/5" vertical corta, "1/1" cuadrada, "16/9" panorámica.
+     - Cada foto se escribe así: f("carpeta/archivo.jpg", "ancho/alto")
+       La ruta es relativa a la carpeta fotos/.
+     - El segundo dato es la proporción exacta de la foto, para que no se recorte.
+     - Para quitar una foto, borra su línea. Para moverla, mueve su línea.
+     - Un ejercicio sin fotos se escribe tema("Nombre") y muestra marcadores grises.
      ===================================================================== */
 
-  // Foto de portada. Escribe la ruta en src, por ejemplo "fotos/portada.jpg".
-  // ratio: "16/9" panorámica, "3/2" horizontal normal, "2/3" vertical.
+  // Foto de portada.
   // alt: describe en pocas palabras lo que se ve en la foto.
   const PORTADA = { src: "fotos/portada.jpg", ratio: "3/2", alt: "Garrafón de plástico tirado sobre el pasto, iluminado por luz cálida del atardecer" };
 
-  // Marcadores por defecto (4 fotos) para ejercicios sin fotos todavía
+  const f = (src, ratio) => ({ src: "fotos/" + src, ratio });
   const pendientes = () => [{ ratio: "3/2" }, { ratio: "2/3" }, { ratio: "4/5" }, { ratio: "3/2" }];
-  const tema = (nombre) => ({ nombre, descripcion: "[Descripción breve del ejercicio]", fotos: pendientes() });
+  const tema = (nombre, fotos = pendientes()) => ({ nombre, descripcion: "[Descripción breve del ejercicio]", fotos });
 
   const SECCIONES = [
     {
       id: "tecnica", numero: "Sección I", titulo: "Técnica",
       temas: [
-        tema("Fotografía estenopeica"),
-        tema("Fotogramas"),
-        tema("Exposición"),
-        tema("Tiempo y movimiento"),
-        tema("Profundidad de campo"),
-        tema("Luz"),
-        tema("Planos"),
-        tema("Ángulos"),
-        tema("Reglas fotográficas"),
+        tema("Fotografía estenopeica", [
+          f("tecnica/estenopeica-01.jpg", "1000/627"),
+          f("tecnica/estenopeica-02.jpg", "2000/1249"),
+          f("tecnica/estenopeica-03.jpg", "2000/1253"),
+          f("tecnica/estenopeica-04.jpg", "2000/1253"),
+          f("tecnica/estenopeica-05.jpg", "77/125"),
+          f("tecnica/estenopeica-06.jpg", "627/1000"),
+        ]),
+        tema("Fotogramas", [
+          f("tecnica/fotogramas-01.jpg", "1589/2000"),
+          f("tecnica/fotogramas-02.jpg", "801/1000"),
+          f("tecnica/fotogramas-03.jpg", "317/400"),
+        ]),
+        tema("Exposición", [
+          f("tecnica/exposicion-01.jpg", "1000/801"),
+          f("tecnica/exposicion-02.jpg", "1000/801"),
+        ]),
+        tema("Tiempo y movimiento", [
+          f("tecnica/tiempo-movimiento-01.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-02.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-03.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-04.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-05.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-06.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-07.jpg", "2000/1333"),
+          f("tecnica/tiempo-movimiento-08.jpg", "2000/1333"),
+        ]),
+        tema("Profundidad de campo", [
+          f("tecnica/profundidad-campo-01.jpg", "2000/1333"),
+          f("tecnica/profundidad-campo-02.jpg", "2000/1333"),
+          f("tecnica/profundidad-campo-03.jpg", "2000/1333"),
+          f("tecnica/profundidad-campo-04.jpg", "2000/1333"),
+          f("tecnica/profundidad-campo-05.jpg", "2000/1333"),
+        ]),
+        tema("Luz", [
+          f("tecnica/luz-01.jpg", "2000/1603"),
+          f("tecnica/luz-02.jpg", "2000/1603"),
+          f("tecnica/luz-03.jpg", "2000/1603"),
+          f("tecnica/luz-04.jpg", "2000/1603"),
+        ]),
+        tema("Planos", [
+          f("tecnica/planos-01.jpg", "2000/1333"),
+          f("tecnica/planos-02.jpg", "2000/1333"),
+          f("tecnica/planos-03.jpg", "1333/2000"),
+          f("tecnica/planos-04.jpg", "1333/2000"),
+          f("tecnica/planos-05.jpg", "1333/2000"),
+          f("tecnica/planos-06.jpg", "1333/2000"),
+          f("tecnica/planos-07.jpg", "1/1"),
+          f("tecnica/planos-08.jpg", "1/1"),
+        ]),
+        tema("Ángulos", [
+          f("tecnica/angulos-01.jpg", "1333/2000"),
+          f("tecnica/angulos-02.jpg", "1/1"),
+          f("tecnica/angulos-03.jpg", "1/1"),
+          f("tecnica/angulos-04.jpg", "2000/1333"),
+          f("tecnica/angulos-05.jpg", "1/1"),
+        ]),
+        tema("Reglas fotográficas", [
+          f("tecnica/reglas-01.jpg", "801/1000"),
+          f("tecnica/reglas-02.jpg", "801/1000"),
+          f("tecnica/reglas-03.jpg", "801/1000"),
+          f("tecnica/reglas-04.jpg", "801/1000"),
+          f("tecnica/reglas-05.jpg", "801/1000"),
+          f("tecnica/reglas-06.jpg", "801/1000"),
+        ]),
       ],
       proyecto: {
         etiqueta: "Proyecto artístico I", titulo: "Gracia sin Pena",
         descripcion: "[Descripción del proyecto]",
-        principal: { ratio: "16/9" },
-        fotos: [{ ratio: "3/2" }, { ratio: "2/3" }, { ratio: "3/2" }, { ratio: "4/5" }, { ratio: "2/3" }, { ratio: "3/2" }],
+        principal: f("gracia-sin-pena/gracia-sin-pena-01.jpg", "2000/1333"),
+        fotos: [
+          f("gracia-sin-pena/gracia-sin-pena-02.jpg", "1333/2000"),
+          f("gracia-sin-pena/gracia-sin-pena-03.jpg", "2000/1333"),
+          f("gracia-sin-pena/gracia-sin-pena-04.jpg", "16/9"),
+          f("gracia-sin-pena/gracia-sin-pena-05.jpg", "2000/1333"),
+          f("gracia-sin-pena/gracia-sin-pena-06.jpg", "8/5"),
+          f("gracia-sin-pena/gracia-sin-pena-07.jpg", "5/4"),
+        ],
       },
     },
     {
       id: "estudio", numero: "Sección II", titulo: "Estudio",
       temas: [
-        tema("Medición de luz"),
-        tema("Luz continua"),
-        tema("Autorretrato"),
-        tema("High key / Low key"),
-        tema("Remake de retratos"),
-        tema("Remake de bodegón"),
-        tema("Naturaleza muerta"),
-        tema("Producto"),
-        tema("Moda"),
+        tema("Medición de luz", [
+          f("estudio/medicion-01.jpg", "1772/1181"),
+          f("estudio/medicion-02.jpg", "1181/1772"),
+          f("estudio/medicion-03.jpg", "1000/667"),
+          f("estudio/medicion-04.jpg", "1181/1772"),
+          f("estudio/medicion-05.jpg", "1772/1181"),
+          f("estudio/medicion-06.jpg", "1181/1772"),
+          f("estudio/medicion-07.jpg", "1772/1181"),
+          f("estudio/medicion-08.jpg", "1181/1772"),
+        ]),
+        tema("Luz continua", [
+          f("estudio/luz-continua-01.jpg", "1181/1772"),
+          f("estudio/luz-continua-02.jpg", "1181/1772"),
+          f("estudio/luz-continua-03.jpg", "1181/1772"),
+          f("estudio/luz-continua-04.jpg", "1181/1772"),
+          f("estudio/luz-continua-05.jpg", "1181/1772"),
+          f("estudio/luz-continua-06.jpg", "1181/1772"),
+        ]),
+        tema("Autorretrato", [
+          f("estudio/autorretrato-01.jpg", "1333/2000"),
+          f("estudio/autorretrato-02.jpg", "2000/1333"),
+        ]),
+        tema("High key / Low key", [
+          f("estudio/high-low-key-01.jpg", "1772/1181"),
+          f("estudio/high-low-key-02.jpg", "1772/1181"),
+        ]),
+        tema("Remake de retratos", [
+          f("estudio/remake-retratos-01.jpg", "1772/1181"),
+          f("estudio/remake-retratos-02.jpg", "1181/1772"),
+          f("estudio/remake-retratos-03.jpg", "1181/1772"),
+        ]),
+        tema("Remake de bodegón", [
+          f("estudio/remake-bodegon-01.jpg", "1181/1540"),
+        ]),
+        tema("Naturaleza muerta", [
+          f("estudio/naturaleza-muerta-01.jpg", "1772/1181"),
+        ]),
+        tema("Producto", [
+          f("estudio/producto-01.jpg", "1772/1181"),
+          f("estudio/producto-02.jpg", "1772/1181"),
+          f("estudio/producto-03.jpg", "1772/1181"),
+          f("estudio/producto-04.jpg", "1772/1181"),
+          f("estudio/producto-05.jpg", "1772/1181"),
+          f("estudio/producto-06.jpg", "1772/1181"),
+          f("estudio/producto-07.jpg", "1772/1181"),
+          f("estudio/producto-08.jpg", "1772/1181"),
+        ]),
+        tema("Moda", [
+          f("estudio/moda-01.jpg", "1181/1772"),
+          f("estudio/moda-02.jpg", "1181/1772"),
+          f("estudio/moda-03.jpg", "1181/1772"),
+          f("estudio/moda-04.jpg", "1181/1772"),
+          f("estudio/moda-05.jpg", "1181/1772"),
+        ]),
       ],
       proyecto: {
         etiqueta: "Proyecto artístico II", titulo: "Onírico",
         descripcion: "[Descripción del proyecto]",
-        principal: { ratio: "16/9" },
-        fotos: [{ ratio: "2/3" }, { ratio: "3/2" }, { ratio: "4/5" }, { ratio: "3/2" }, { ratio: "2/3" }, { ratio: "1/1" }],
+        principal: f("onirico/onirico-02.jpg", "1772/1181"),
+        fotos: [
+          f("onirico/onirico-01.jpg", "1771/1181"),
+          f("onirico/onirico-03.jpg", "1772/1181"),
+          f("onirico/onirico-04.jpg", "1772/1181"),
+          f("onirico/onirico-05.jpg", "1772/1181"),
+          f("onirico/onirico-06.jpg", "1771/1181"),
+          f("onirico/onirico-07.jpg", "1772/1181"),
+        ],
       },
     },
     {
       id: "interiores", numero: "Sección III", titulo: "Arquitectura de interiores",
       resumen: "Campo Militar, Centro, MAMO, MUNAL y Taller de Metales",
       temas: [
-        tema("Campo Militar"),
-        tema("Centro"),
-        tema("MAMO"),
-        tema("MUNAL"),
-        tema("Taller de Metales"),
+        tema("Campo Militar", [
+          f("interiores/campo-militar-01.jpg", "2000/1333"),
+          f("interiores/campo-militar-02.jpg", "2000/1333"),
+          f("interiores/campo-militar-03.jpg", "2000/1333"),
+          f("interiores/campo-militar-04.jpg", "2000/1333"),
+          f("interiores/campo-militar-05.jpg", "2000/1333"),
+          f("interiores/campo-militar-06.jpg", "2000/1333"),
+          f("interiores/campo-militar-07.jpg", "2000/1333"),
+          f("interiores/campo-militar-08.jpg", "2000/1333"),
+          f("interiores/campo-militar-09.jpg", "2000/1333"),
+          f("interiores/campo-militar-10.jpg", "2000/1333"),
+          f("interiores/campo-militar-11.jpg", "1333/2000"),
+          f("interiores/campo-militar-12.jpg", "2000/1333"),
+          f("interiores/campo-militar-13.jpg", "2000/1333"),
+          f("interiores/campo-militar-14.jpg", "2000/1333"),
+          f("interiores/campo-militar-15.jpg", "2000/1333"),
+        ]),
+        tema("Centro", [
+          f("interiores/centro-01.jpg", "2000/1333"),
+          f("interiores/centro-02.jpg", "2000/1333"),
+          f("interiores/centro-03.jpg", "2000/1333"),
+          f("interiores/centro-04.jpg", "1333/2000"),
+          f("interiores/centro-05.jpg", "2000/1333"),
+          f("interiores/centro-06.jpg", "2000/1333"),
+          f("interiores/centro-07.jpg", "2000/1333"),
+          f("interiores/centro-08.jpg", "2000/1333"),
+          f("interiores/centro-09.jpg", "2000/1333"),
+          f("interiores/centro-10.jpg", "2000/1333"),
+          f("interiores/centro-11.jpg", "1333/2000"),
+          f("interiores/centro-12.jpg", "2000/1333"),
+          f("interiores/centro-13.jpg", "2000/1333"),
+          f("interiores/centro-14.jpg", "2000/1333"),
+          f("interiores/centro-15.jpg", "2000/1333"),
+        ]),
+        tema("MAMO", [
+          f("interiores/mamo-01.jpg", "2000/1333"),
+          f("interiores/mamo-02.jpg", "2000/1333"),
+          f("interiores/mamo-03.jpg", "2000/1333"),
+          f("interiores/mamo-04.jpg", "2000/1333"),
+          f("interiores/mamo-05.jpg", "2000/1333"),
+          f("interiores/mamo-06.jpg", "2000/1333"),
+          f("interiores/mamo-07.jpg", "1333/2000"),
+          f("interiores/mamo-08.jpg", "1333/2000"),
+          f("interiores/mamo-09.jpg", "2000/1333"),
+          f("interiores/mamo-10.jpg", "1333/2000"),
+          f("interiores/mamo-11.jpg", "2000/1333"),
+          f("interiores/mamo-12.jpg", "2000/1333"),
+          f("interiores/mamo-13.jpg", "2000/1333"),
+          f("interiores/mamo-14.jpg", "2000/1333"),
+          f("interiores/mamo-15.jpg", "2000/1333"),
+        ]),
+        tema("MUNAL", [
+          f("interiores/munal-01.jpg", "2000/1333"),
+          f("interiores/munal-02.jpg", "2000/1333"),
+          f("interiores/munal-03.jpg", "2000/1333"),
+          f("interiores/munal-04.jpg", "2000/1333"),
+          f("interiores/munal-05.jpg", "2000/1333"),
+          f("interiores/munal-06.jpg", "2000/1333"),
+          f("interiores/munal-07.jpg", "2000/1333"),
+          f("interiores/munal-08.jpg", "2000/1333"),
+          f("interiores/munal-09.jpg", "2000/1333"),
+          f("interiores/munal-10.jpg", "2000/1333"),
+          f("interiores/munal-11.jpg", "1333/2000"),
+          f("interiores/munal-12.jpg", "2000/1333"),
+          f("interiores/munal-13.jpg", "2000/1333"),
+          f("interiores/munal-14.jpg", "2000/1333"),
+          f("interiores/munal-15.jpg", "2000/1333"),
+        ]),
+        tema("Taller de Metales", [
+          f("interiores/taller-metales-01.jpg", "2000/1333"),
+          f("interiores/taller-metales-02.jpg", "2000/1333"),
+          f("interiores/taller-metales-03.jpg", "2000/1333"),
+          f("interiores/taller-metales-04.jpg", "2000/1333"),
+          f("interiores/taller-metales-05.jpg", "2000/1333"),
+          f("interiores/taller-metales-06.jpg", "2000/1333"),
+          f("interiores/taller-metales-07.jpg", "2000/1333"),
+          f("interiores/taller-metales-08.jpg", "2000/1333"),
+          f("interiores/taller-metales-09.jpg", "2000/1333"),
+          f("interiores/taller-metales-10.jpg", "2000/1333"),
+          f("interiores/taller-metales-11.jpg", "2000/1333"),
+          f("interiores/taller-metales-12.jpg", "2000/1333"),
+          f("interiores/taller-metales-13.jpg", "2000/1333"),
+          f("interiores/taller-metales-14.jpg", "2000/1333"),
+          f("interiores/taller-metales-15.jpg", "2000/1333"),
+        ]),
       ],
     },
   ];
